@@ -1,0 +1,38 @@
+id = "disenchanting_table"
+kind = "native-mod"
+name = "Dis-Enchanting Table"
+summary = "Move an item's enchantments onto a book for 25 experience points at a Dis-Enchanting Table."
+description = """
+A port of [Dis-Enchanting Table](https://github.com/Mods-For-Lupin/Dis-Enchanting-Redux)
+by Lupin and Jason13 for Horizon. The table strips enchantments off an item and
+writes them onto a book.
+
+- Place the table and right-click it: put an enchanted item in the input slot,
+  a `minecraft:book` in the book slot, and an empty slot for the result.
+- A right click moves the enchantments onto a new enchanted book and costs 25
+  experience points; an enchanted book needs at least two enchantments to be
+  worth dis-enchanting. A missing book, missing experience or an occupied output
+  leaves everything as it was.
+- The table keeps the jar's light 7, its 12-pixel shape, its stone-pickaxe
+  harvest level, and hoppers may fill the input and book slots.
+- `/disenchanting_table info <x> <y> <z>` prints the three slots for testing.
+
+Unlicense — original copyright and licence notices are kept in the port
+repository; see LICENSE and LICENSE-NOTICE.md there.
+"""
+authors = ["Lupin", "Jason13", "AdLf0208"]
+owners = ["AdLf0208"]
+owner_ids = [107615167]
+license = "Unlicense"
+source = "https://github.com/AdLf0208/disenchanting_table"
+icon = "icons/disenchanting_table.png"
+categories = ["game-mechanics", "utility"]
+tags = ["port", "enchanting", "machines", "utility"]
+
+[[versions]]
+version = "0.1.0"
+published = "2026-11-09"
+game = "26.3"
+file = "disenchanting_table.hnmod"
+sha256 = "f046323faccd4f796f6fdf573f657296958479055d0cde288e3ebf96b33d6d30"
+changelog = "First release"
