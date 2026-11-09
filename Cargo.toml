@@ -1,0 +1,19 @@
+[package]
+# Port of Dis-Enchanting Table 5.0.2
+# (Mods-For-Lupin/Dis-Enchanting-Redux, Unlicense), Minecraft Java 1.21.1
+# NeoForge. Clean-room Rust rewrite; local-only until publishing is approved,
+# and publishable under the Unlicense with this complete source.
+name = "horizon-disenchanting_table"
+version = "5.0.2"
+edition = "2024"
+rust-version = "1.95"
+license = "Unlicense"
+description = "Dis-Enchanting Table for Horizon: the table block (slice 1)"
+publish = false
+
+[lib]
+# This exact source is also injected as a same-crate module by horizon-mixins.
+path = "mixins/disenchanting_table/runtime.rs"
+
+[workspace]
+resolver = "2"

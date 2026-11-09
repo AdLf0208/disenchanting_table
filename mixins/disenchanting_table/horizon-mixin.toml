@@ -1,0 +1,170 @@
+[mod]
+id = "disenchanting_table"
+version = "5.0.2"
+priority = 100
+
+[compatibility]
+horizon_revision = "1d63e0a5a37a7a708eb0b32b49bf0dfeb28ed8a9"
+
+# The pure table engine (standalone crate lib, injected as
+# `crate::game::disenchanting_table`): eligibility, the result plan, the slot
+# rules, the experience cost model.
+[[module]]
+id = "runtime"
+file = "crates/horizon-client/src/game.rs"
+name = "disenchanting_table"
+source = "runtime.rs"
+visibility = "pub"
+
+# Game-side glue: the block entity, container, screen, click, deferred charge
+# and the `/disenchanting_table info` readout.
+[[module]]
+id = "state"
+file = "crates/horizon-client/src/game.rs"
+name = "disenchanting_table_state"
+source = "support.rs"
+
+# The same pure engine, in the file `horizon-client-lib` also compiles, so the
+# slot-rules hook (a free function there) can answer without reaching gameplay.
+# `pub` so the parts that file does not call are reachable, not dead code.
+[[module]]
+id = "rules"
+file = "crates/horizon-client/src/menu.rs"
+name = "disenchanting_table_rules"
+source = "runtime.rs"
+visibility = "pub"
+
+# The content half is inside this bundle (`data/disenchanting_table-content.hmod`, the built
+# `content/disenchanting_table.hmod`): this writes it to `.horizon-cache/` and appends it to the
+# dev-mod list, so one `.hnmod` installs the block and the code. The registry keeps one file per
+# project, so a split port could not be listed; AE2 ships the same pattern.
+[[injection]]
+id = "embedded-content"
+kind = "HEAD"
+cancellable = true
+target = "horizon_client::game::mods::content_root"
+helper = "embedded_content.rs"
+bindings = [
+  { name = "root", ty = "&std::path::Path", value = "root" },
+  { name = "enabled", ty = "&std::collections::BTreeSet<String>", value = "enabled" },
+  { name = "dev", ty = "&[std::path::PathBuf]", value = "dev" },
+]
+
+# The table gets a block entity (API 15).
+[[injection]]
+id = "block-entity"
+hook = "block_entity"
+hook_version = 1
+kind = "HEAD"
+helper = "block_entity.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "entity", ty = "&mut Option<(String, horizon_world::nbt::Compound)>", value = "entity" },
+]
+
+# ... three slots and its menu (API 16/17).
+[[injection]]
+id = "block-entity-container"
+hook = "block_entity_container"
+hook_version = 1
+kind = "HEAD"
+helper = "block_entity_container.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "container", ty = "&mut Option<horizon_client::containers::ModContainer>", value = "container" },
+]
+
+# The three-slot screen layout (API 19).
+[[injection]]
+id = "screen"
+hook = "screen"
+hook_version = 1
+kind = "HEAD"
+helper = "screen.rs"
+bindings = [
+  { name = "block", ty = "&str", value = "block" },
+  { name = "screen", ty = "&mut Option<NativeScreen>", value = "screen" },
+]
+
+# ... and the experience cost drawn on it (API 19).
+[[injection]]
+id = "screen-draw"
+hook = "screen_draw"
+hook_version = 1
+kind = "HEAD"
+helper = "screen_draw.rs"
+bindings = [
+  { name = "game", ty = "&crate::game::Game<'_>", value = "self" },
+  { name = "block", ty = "&str", value = "block" },
+  { name = "data", ty = "&[i32]", value = "data" },
+  { name = "batch", ty = "&mut horizon_client::hud::HudBatch", value = "batch" },
+  { name = "origin", ty = "[f32; 2]", value = "origin" },
+]
+
+# The dis-enchant itself, or the menu (API 21).
+[[injection]]
+id = "right-click-block"
+hook = "right_click_block"
+hook_version = 1
+kind = "HEAD"
+helper = "right_click_block.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "pos", ty = "[i32; 3]", value = "pos" },
+  { name = "face", ty = "[i32; 3]", value = "face" },
+  { name = "canceled", ty = "&mut bool", value = "canceled" },
+]
+
+# The experience charge the click queued (API 4): the console can take points,
+# a player's hook cannot.
+[[injection]]
+id = "server-tick"
+hook = "server_tick"
+hook_version = 1
+kind = "HEAD"
+helper = "server_tick.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "phase", ty = "ServerTickPhase", value = "phase" },
+]
+
+# `/disenchanting_table info` (API 8).
+[[injection]]
+id = "register-commands"
+hook = "register_commands"
+hook_version = 1
+kind = "HEAD"
+helper = "register_commands.rs"
+bindings = [
+  { name = "commands", ty = "&mut Vec<NativeCommand>", value = "commands" },
+]
+
+[[injection]]
+id = "perform-command"
+hook = "perform_command"
+hook_version = 1
+kind = "HEAD"
+helper = "perform_command.rs"
+bindings = [
+  { name = "game", ty = "&mut crate::game::Game<'_>", value = "&mut *self" },
+  { name = "player", ty = "&NativeServerPlayer", value = "player" },
+  { name = "command", ty = "&str", value = "command" },
+  { name = "ran", ty = "&mut bool", value = "ran" },
+]
+
+# What each slot of the table's menu takes (API 130). The target is a free
+# function in `menu.rs`, which `horizon-client-lib` compiles too, so it answers
+# from the engine injected there.
+[[injection]]
+id = "menu-slot-rules"
+hook = "menu_slot_rules"
+hook_version = 1
+kind = "HEAD"
+helper = "menu_slot_rules.rs"
+bindings = [
+  { name = "menu", ty = "&str", value = "menu" },
+  { name = "slot", ty = "usize", value = "slot" },
+  { name = "stack", ty = "&crate::items::ItemStack", value = "stack" },
+  { name = "may_place", ty = "&mut bool", value = "may_place" },
+  { name = "max_stack", ty = "&mut u32", value = "max_stack" },
+]
