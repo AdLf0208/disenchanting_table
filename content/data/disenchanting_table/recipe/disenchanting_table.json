@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "disenchanting_table:disenchanting_table",
+  "pattern": [
+    " L ",
+    "D#D",
+    "###"
+  ],
+  "key": {
+    "#": "minecraft:obsidian",
+    "L": "minecraft:lapis_lazuli",
+    "D": "minecraft:diamond"
+  },
+  "result": {
+    "id": "disenchanting_table:disenchanting_table",
+    "count": 1
+  }
+}

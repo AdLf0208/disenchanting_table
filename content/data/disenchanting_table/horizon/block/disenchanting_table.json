@@ -1,0 +1,35 @@
+{
+  "template": "minecraft:barrel",
+  "properties": {
+    "hardness": 5.0,
+    "explosion_resistance": 1200.0,
+    "light": 7,
+    "sounds": "minecraft:stone",
+    "requires_tool": true,
+    "occludes": false
+  },
+  "shapes": {
+    "default": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.75,
+        1.0
+      ]
+    ]
+  },
+  "collision_shapes": {
+    "default": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.75,
+        1.0
+      ]
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+# Port-owned content mod for the Dis-Enchanting Table 5.0.2 slice: the table
+# block, its menu and carried assets. The models, textures and blockstate are
+# the upstream mod's own Unlicense assets, read from the exact ATM10 jar (see
+# ../../_shared/carry-work/disenchanting_table/SOURCE.md).
+id = "disenchanting_table"
+name = "Dis-Enchanting Table"
+version = "0.1.0"
+api = "0.2"
+side = "both"
+capabilities = ["registries"]
